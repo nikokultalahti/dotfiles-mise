@@ -1,0 +1,119 @@
+# ==============================================================================
+# MISE MASTER CONFIGURATION
+# ==============================================================================
+
+[settings]
+# Mise's own update settings
+self_update.auto = false
+disable_update_warning = true
+
+# Update settings for global tools
+tool_update.check_duration = "24h"
+tool_update.global_auto = true
+
+color_theme = "catppuccin"
+dotfiles.root = "~/.dotfiles"
+dotfiles.default_mode = "copy"
+
+[vars]
+name = "Niko Kultalahti"
+email = "hello@nikokultalahti.com"
+
+# ==============================================================================
+# SECRETS (mise bootstrap secrets)
+# Resolved before any other bootstrap phase.
+# ==============================================================================
+[bootstrap.secrets]
+ssh_config_personal = "SSH_CONFIG_PERSONAL"
+
+# ==============================================================================
+# SYSTEM DIRECTORIES AND FILES (mise bootstrap files)
+# ==============================================================================
+
+[bootstrap.directories."~/.ssh"]
+mode = "0700"
+owner = "niko"
+
+# ==============================================================================
+# PERSONAL TOOLS (mise install)
+# ==============================================================================
+
+[tools]
+atuin = "latest"
+bat = "latest"
+bitwarden = "latest"
+carapace = "latest"
+eza = "latest"
+fd = "latest"
+fnox = { version = "latest", workflow = "release.yml" }
+fzf = "latest"
+gh = "latest"
+"github:danielmiessler/fabric" = "latest"
+goose-agent = "latest"
+pi = "latest"
+pre-commit = "latest"
+ripgrep = "latest"
+shellcheck = "latest"
+starship = "latest"
+tealdeer = "latest"
+yq = "latest"
+yt-dlp = { version = "latest", rename_exe = "yt-dlp" }
+zoxide = "latest"
+
+# ==============================================================================
+# PERSONAL PACKAGES (mise bootstrap packages apply)
+# ==============================================================================
+
+[bootstrap.packages]
+"flatpak-user:com.bitwarden.desktop" = "latest"
+"flatpak-user:com.yubico.yubioath" = "latest"
+"flatpak-user:io.github.maniacx.BudsLink" = "latest"
+"flatpak-user:com.tomjwatson.Emote" = "latest"
+"flatpak-user:be.alexandervanhee.gradia" = "latest"
+"flatpak-user:io.gitlab.adhami3310.Impression" = "latest"
+"flatpak-user:org.gnome.World.PikaBackup" = "latest"
+"flatpak-user:org.libreoffice.LibreOffice" = "latest"
+"flatpak-user:com.github.jeromerobert.pdfarranger" = "latest"
+"flatpak-user:net.donnybeelo.Convey" = "latest"
+"flatpak-user:dev.qwery.AddWater" = "latest"
+"flatpak-user:io.github.alainm23.planify" = "latest"
+"flatpak-user:org.gnome.World.Iotas" = "latest"
+"flatpak-user:org.gnome.gitlab.cheywood.Pulp" = "latest"
+"flatpak-user:app.fotema.Fotema" = "latest"
+"flatpak-user:org.signal.Signal" = "latest"
+"flatpak-user:dev.geopjr.Tuba" = "latest"
+"flatpak-user:io.github.qwersyk.Newelle" = "latest"
+"flatpak-user:cafe.avery.Delfin" = "latest"
+"flatpak-user:de.haeckerfelix.Fragments" = "latest"
+"flatpak-user:de.schmidhuberj.tubefeeder" = "latest" # Pipeline
+"flatpak-user:org.gnome.gitlab.somas.Apostrophe" = "latest"
+"flatpak-user:re.sonny.Eloquent" = "latest"
+"flatpak-user:dev.zed.Zed" = "latest"
+"flatpak-user:re.sonny.Commit" = "latest"
+"flatpak-user:me.iepure.devtoolbox" = "latest"
+"flatpak-user:com.mardojai.ForgeSparks" = "latest"
+"flatpak-user:com.github.marhkb.Pods" = "latest"
+"flatpak-user:org.gnome.Boxes" = "latest"
+"flatpak-user:com.ranfdev.DistroShelf" = "latest"
+"flatpak-user:io.github.getnf.embellish" = "latest" # Nerd Fonts
+"flatpak-user:org.chromium.Chromium" = "latest"
+
+# ==============================================================================
+# DOTFILES & TEMPLATES (mise dot)
+# ==============================================================================
+
+[dotfiles]
+"~/.bashrc" = { mode = "copy" }
+"~/.config/Code/User/settings.json" = { mode = "copy" }
+"~/.config/atuin/config.toml" = { mode = "copy" }
+"~/.config/bat" = { mode = "copy" }
+"~/.config/mise/" = { mode = "symlink" }
+"~/.config/tealdeer/config.toml" = { mode = "copy" }
+"~/.gitconfig" = { mode = "copy" }
+"~/.var/app/dev.zed.Zed/config/zed/settings.json" = { mode = "copy" }
+"~/.zshrc" = { mode = "copy" }
+
+# Templates
+[dotfiles."~/.ssh/config"]
+source = "~/.dotfiles/.ssh/config.tmpl"
+mode = "template"

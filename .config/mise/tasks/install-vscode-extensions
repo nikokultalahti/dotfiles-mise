@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+#MISE description="Install VSCode extensions from extensions.yaml"
+
+# Check if yq is installed
+if ! command -v yq &> /dev/null; then
+    echo "Error: yq is not installed. Please install it first (e.g., 'mise use yq')."
+    exit 1
+fi
+
+# Check if code CLI is installed
+if ! command -v code &> /dev/null; then
+    echo "Error: VSCode CLI (code) is not installed. Please install it first."
+    exit 1
+fi
+
+# Default category to install (can be overridden by passing an argument)
+CATEGORY="${1:-all}"
+
+# Function to install an extension
+install_extension() {
+    local extension="$1"
+    if ! code --list-extensions | grep -qixF "$extension"; then
+        echo "Installing $extension..."
+        code --install-extension "$extension" --force || echo "Failed to install $extension" >&2
+    else
+        echo "Already installed: $extension"
+    fi
+}
+
+# Install extensions based on category
+if [[ "$CATEGORY" == "all" ]]; then
+    # Install all extensions from all categories
+    for category in $(yq eval 'keys | .[]' ~/.config/mise/tasks/extensions.yaml); do
+        extensions=$(yq eval ".${category}[]" ~/.config/mise/tasks/extensions.yaml)
+        for extension in $extensions; do
+            install_extension "$extension"
+        done
+    done
+else
+    # Install extensions from the specified category
+    extensions=$(yq eval ".${CATEGORY}[]" ~/.config/mise/tasks/extensions.yaml)
+    if [[ -z "$extensions" ]]; then
+        echo "Error: Category '$CATEGORY' not found in extensions.yaml"
+        exit 1
+    fi
+    for extension in $extensions; do
+        install_extension "$extension"
+    done
+fi
+
+echo "VSCode extensions installed successfully!"

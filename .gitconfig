@@ -1,0 +1,21 @@
+[user]
+    name = Niko Kultalahti
+    email = hello@nikokultalahti.com
+    signingkey = ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHTI6zoCvmPy+Rh0NnkOziJwDGVFRS0aBJyxUcZNqzNi
+[color]
+    ui = auto
+[core]
+    editor = "flatpak run re.sonny.Commit"
+    excludesfile = {{ .chezmoi.homeDir }}/.gitignore
+[gpg]
+    format=ssh
+[commit]
+    gpgsign=true
+[filter "lfs"]
+    clean = git-lfs clean -- %f
+    smudge = git-lfs smudge -- %f
+    process = git-lfs filter-process
+    required = true
+[re.sonny.Commit]
+    title-length-hint=50
+    body-length-wrap=72

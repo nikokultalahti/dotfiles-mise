@@ -1,0 +1,9 @@
+# ==============================================================================
+# FNOX CONFIGURATION (Secret Manager)
+# Integrates with Bitwarden to expose secrets for mise
+# ==============================================================================
+[providers.bitwarden]
+type = "bitwarden"
+
+[secrets]
+SSH_CONFIG_PERSONAL         = { provider = "bitwarden", value = "mise-ssh-config-personal/notes" }
