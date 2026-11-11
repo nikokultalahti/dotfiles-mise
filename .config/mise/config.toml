@@ -116,3 +116,10 @@ zoxide = "latest"
 [dotfiles."~/.ssh/config"]
 source = "~/.dotfiles/.ssh/config.tmpl"
 mode = "template"
+
+# ==============================================================================
+# HOOK: FINAL
+# Switch git origin from the HTTPS over to SSH
+# ==============================================================================
+[bootstrap.hooks.final]
+run = "git -C \"$HOME/.dotfiles\" remote set-url origin git@github.com:nikokultalahti/dotfiles-mise.git"

@@ -43,6 +43,7 @@ bash <(curl -sSf https://raw.githubusercontent.com/nikokultalahti/dotfiles-mise/
    - copies / symlinks / templates the files listed under `[dotfiles]`
      (shell rc files, `.gitconfig`, editor configs, and `~/.ssh/config` rendered
      from `.ssh/config.tmpl` with the `SSH_CONFIG_PERSONAL` secret)
+   - Switches git origin from the HTTPS to SSH for the repository
 
 Afterwards, restart your terminal (or `source ~/.zshrc` / `~/.bashrc`) and
 verify with `mise doctor`.
