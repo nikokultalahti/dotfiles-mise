@@ -32,7 +32,6 @@ ssh_config_personal = "SSH_CONFIG_PERSONAL"
 
 [bootstrap.directories."~/.ssh"]
 mode = "0700"
-owner = "niko"
 
 # ==============================================================================
 # PERSONAL TOOLS (mise install)
