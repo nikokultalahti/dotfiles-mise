@@ -1,14 +1,19 @@
 #!/usr/bin/env bash
 # # Bootstrap a new machine with mise and dotfiles.
 
-# Usage on a fresh machine:
-#   curl -sSf https://raw.githubusercontent.com/nikokultalahti/dotfiles-mise/main/bootstrap.sh | bash
+# Usage on a fresh machine (requires bash and an interactive terminal).
+# NOTE: do NOT pipe into bash (`curl ... | bash`) — then stdin is the script
+# pipe and the interactive `bw login`/`bw unlock` prompts read EOF and fail.
+#   bash <(curl -sSf https://raw.githubusercontent.com/nikokultalahti/dotfiles-mise/main/bootstrap.sh)
 
 set -euo pipefail
 
 DOTFILES_REPO="${DOTFILES_REPO:-https://github.com/nikokultalahti/dotfiles-mise.git}"
-REPO_DIR="$HOME/.dotfiles"
-MISE_DIR="$HOME/.config/mise"
+# Exported because the `mise exec ... -- bash -c '...'` block below is
+# single-quoted: the inner shell expands $REPO_DIR/$MISE_DIR itself and only
+# sees variables that are exported.
+export REPO_DIR="$HOME/.dotfiles"
+export MISE_DIR="$HOME/.config/mise"
 
 echo "------------------------------------------------------------"
 echo "Workstation Bootstrap (Mise + Bitwarden + Fnox)"
