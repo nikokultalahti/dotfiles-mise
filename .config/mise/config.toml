@@ -109,6 +109,7 @@ zoxide = "latest"
 "~/.config/mise/" = { mode = "symlink" }
 "~/.config/tealdeer/config.toml" = { mode = "copy" }
 "~/.gitconfig" = { mode = "copy" }
+"~/.pi/agent/settings.json" = { mode = "symlink" }
 "~/.var/app/dev.zed.Zed/config/zed/settings.json" = { mode = "copy" }
 "~/.zshrc" = { mode = "copy" }
 

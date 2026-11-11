@@ -1,0 +1,7 @@
+{
+  "lastChangelogVersion": "1.5.0",
+  "defaultProvider": "mistral",
+  "defaultModel": "mistral-large-4",
+  "enableInstallTelemetry": false,
+  "defaultThinkingLevel": "medium"
+}
