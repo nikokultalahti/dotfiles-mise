@@ -1,0 +1,4 @@
+# Machine-local mise files, never shared between machines. This covers
+# .config/mise/miserc.local.toml, which bootstrap.sh writes to record the
+# machine's role (and any config.local.toml added for a single machine).
+*.local.toml

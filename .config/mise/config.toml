@@ -106,7 +106,10 @@ zoxide = "latest"
 "~/.config/Code/User/settings.json" = { mode = "copy" }
 "~/.config/atuin/config.toml" = { mode = "copy" }
 "~/.config/bat" = { mode = "copy" }
-"~/.config/mise/" = { mode = "symlink" }
+# ~/.config/mise stays a real directory with one link per repo file, so the
+# machine-local miserc.local.toml (the role) is never written into the repo.
+# *.local.toml is never linked from the repo.
+"~/.config/mise" = { mode = "symlink-each", exclude = ["*.local.toml"] }
 "~/.config/tealdeer/config.toml" = { mode = "copy" }
 "~/.gitconfig" = { mode = "copy" }
 "~/.pi/agent/settings.json" = { mode = "symlink" }

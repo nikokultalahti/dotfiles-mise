@@ -1,0 +1,9 @@
+# Read by mise before any config file (see https://mise.jdx.dev/configuration.html#miserc).
+#
+# auto_env loads the OS-specific config file next to config.toml
+# (config.linux.toml / config.macos.toml) without any flag.
+#
+# The machine's role (personal or work) is NOT set here, because this file is
+# shared. It lives in the untracked miserc.local.toml, which bootstrap.sh writes
+# before the first bootstrap.
+auto_env = true

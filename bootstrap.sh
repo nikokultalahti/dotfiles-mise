@@ -22,33 +22,74 @@ echo ""
 
 # 1. Install & Activate Mise
 if ! command -v mise &>/dev/null && [ ! -x "$HOME/.local/bin/mise" ]; then
-    echo "[1/3] Installing Mise..."
+    echo "[1/4] Installing Mise..."
     curl -fsSL https://mise.run | sh
     echo "[✓] Mise installed"
 else
-    echo "[1/5] Mise is already installed"
+    echo "[1/4] Mise is already installed"
 fi
 
 export PATH="$HOME/.local/bin:$PATH"
 CURRENT_SHELL="$(basename "${SHELL:-bash}")"
 eval "$("$HOME/.local/bin/mise" activate "$CURRENT_SHELL" 2>/dev/null || "$HOME/.local/bin/mise" activate bash)"
 
-# Step 2: Clone the dotfiles and seed global mise config
+# Step 2: Ask for the machine role (personal or work)
+# Asked before anything is cloned, so quitting here leaves the machine untouched.
+# The role is saved in step 3 to ~/.config/mise/miserc.local.toml, before
+# bootstrap runs, so mise loads config.<role>.toml with no -E flag, now and on
+# every later run. It is only asked on a machine that has no such file yet. Set
+# MACHINE_ROLE to skip the prompt; it also changes the role of an already
+# bootstrapped machine.
+# (~/.config/mise is a real directory, so that file lives outside the repo.)
+ROLE="${MACHINE_ROLE:-}"
+if [ -z "$ROLE" ] && [ ! -f "$MISE_DIR/miserc.local.toml" ]; then
+    until [ "$ROLE" = "personal" ] || [ "$ROLE" = "work" ]; do
+        read -r -p "[2/4] Machine role [personal/work]: " ROLE
+    done
+fi
+case "$ROLE" in
+    personal | work | "") ;; # empty: the existing miserc.local.toml stays
+    *)
+        echo "MACHINE_ROLE must be 'personal' or 'work', got '$ROLE'" >&2
+        exit 1
+        ;;
+esac
+
+# Step 3: Clone the dotfiles, seed global mise config and save the machine role
 if [ ! -d "$REPO_DIR/.git" ]; then
-    echo "[2/3] Cloning $DOTFILES_REPO to $REPO_DIR..."
+    echo "[3/4] Cloning $DOTFILES_REPO to $REPO_DIR..."
     mkdir -p "$HOME/.config"
     git clone "$DOTFILES_REPO" "$REPO_DIR"
     echo "[✓] Dotfiles cloned"
 else
-    echo "[2/3] Repo already present at $REPO_DIR"
+    echo "[3/4] Repo already present at $REPO_DIR"
 fi
-ln -s ~/.dotfiles/.config/mise "$MISE_DIR"
 
-# Step 3. Authenticate Bitwarden and run bootstrap through fnox
+# ~/.config/mise is a real directory. The first bootstrap below runs from the
+# repo's .config/mise, and its `[dotfiles]` entry (symlink-each) links every repo
+# file into this directory, which mise then reads as its global config. The role
+# file stays here, outside the repo.
+# Older layout: ~/.config/mise was one link to the repo folder, which put the
+# role file inside the repo. Replace the link and move the role file with it.
+if [ -L "$MISE_DIR" ]; then
+    rm "$MISE_DIR"
+    mkdir -p "$MISE_DIR"
+    if [ -f "$REPO_DIR/.config/mise/miserc.local.toml" ]; then
+        mv "$REPO_DIR/.config/mise/miserc.local.toml" "$MISE_DIR/miserc.local.toml"
+    fi
+fi
+mkdir -p "$MISE_DIR"
+
+if [ -n "$ROLE" ]; then
+    printf 'env = ["%s"]\n' "$ROLE" > "$MISE_DIR/miserc.local.toml"
+    echo "[✓] Machine role saved: $ROLE"
+fi
+
+# Step 4. Authenticate Bitwarden and run bootstrap through fnox
 # bitwarden/fnox are pulled in via `mise exec` here instead of `mise use -g`:
 # `mise use -g` would write ~/.config/mise/config.toml
 # ------------------------------------------------------------------------------
-echo "[3/3] Preparing Bitwarden + fnox and running bootstrap..."
+echo "[4/4] Preparing Bitwarden + fnox and running bootstrap..."
 # shellcheck disable=SC2016
 mise exec bitwarden@latest fnox@latest -- bash -c '
     set -euo pipefail
@@ -74,7 +115,11 @@ mise exec bitwarden@latest fnox@latest -- bash -c '
     export BW_SESSION
     echo "[✓] Bitwarden vault unlocked"
 
-    cd "$MISE_DIR"
+    # The first run reads the config of the repo as project config (and, once its
+    # dotfiles are applied, ~/.config/mise as global config), so it needs trust.
+    # Trusting config.toml also covers the config.<env>.toml files next to it.
+    mise trust "$REPO_DIR/.config/mise/config.toml"
+    cd "$REPO_DIR/.config/mise"
     echo "[-] Running bootstrap through fnox..."
     fnox exec -- mise bootstrap
 '
