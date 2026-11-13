@@ -20,7 +20,7 @@ echo "Workstation Bootstrap (Mise + Bitwarden + Fnox)"
 echo "------------------------------------------------------------"
 echo ""
 
-# 1. Install & Activate Mise
+# 1. Install Mise
 if ! command -v mise &>/dev/null && [ ! -x "$HOME/.local/bin/mise" ]; then
     echo "[1/4] Installing Mise..."
     curl -fsSL https://mise.run | sh
@@ -30,8 +30,6 @@ else
 fi
 
 export PATH="$HOME/.local/bin:$PATH"
-CURRENT_SHELL="$(basename "${SHELL:-bash}")"
-eval "$("$HOME/.local/bin/mise" activate "$CURRENT_SHELL" 2>/dev/null || "$HOME/.local/bin/mise" activate bash)"
 
 # Step 2: Ask for the machine role (personal or work)
 # Asked before anything is cloned, so quitting here leaves the machine untouched.
@@ -127,6 +125,6 @@ mise exec bitwarden@latest fnox@latest -- bash -c '
 echo "-----------------------------"
 echo ""
 echo "Next steps:"
-echo "  1. Restart your terminal or run: source ~/.bashrc (or ~/.zshrc)"
+echo '  1. Restart your terminal (or run: exec "$SHELL")'
 echo "  2. Verify with: mise doctor"
 echo "  3. Check dotfiles: mise dot status"
